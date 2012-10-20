@@ -1,41 +1,81 @@
-# == Class: runit
-#
-# Full description of class runit here.
-#
-# === Parameters
-#
-# Document parameters here.
-#
-# [*sample_parameter*]
-#   Explanation of what this parameter affects and what it defaults to.
-#   e.g. "Specify one or more upstream ntp servers as an array."
-#
-# === Variables
-#
-# Here you should define a list of variables that this module would require.
-#
-# [*sample_variable*]
-#   Explanation of how this variable affects the funtion of this class and if it
-#   has a default. e.g. "The parameter enc_ntp_servers must be set by the
-#   External Node Classifier as a comma separated list of hostnames." (Note,
-#   global variables should not be used in preference to class parameters  as of
-#   Puppet 2.6.)
-#
-# === Examples
-#
-#  class { runit:
-#    servers => [ 'pool.ntp.org', 'ntp.local.company.com' ]
-#  }
-#
-# === Authors
-#
-# Author Name <author@domain.com>
-#
-# === Copyright
-#
-# Copyright 2011 Your name here, unless otherwise noted.
-#
 class runit {
-
-
+  include runit::install, runit::service
 }
+
+define runit::user (
+  $group = ''
+) {
+  $user = $name
+  User {
+    owner   => root,
+    group   => root,
+  }
+  file { "/etc/runit/${user}":
+    ensure  => directory,
+    mode    => '0755',
+    require => File['/etc/runit'],
+  }
+  file { "/etc/runit/${user}/down":
+    ensure  => absent,
+    require => File["/etc/runit/${user}"],
+  }
+  file { "/etc/runit/${user}/run":
+    ensure  => file,
+    content => template('runit/user_run.erb'),
+    mode    => '0555',
+    require => [
+      File["/etc/runit/${user}", "/etc/runit/${user}/down"],
+      Class['runit::install']
+    ],
+  }
+
+  file { "/home/${user}/service":
+    ensure  => directory,
+    mode    => '0755',
+    owner   => $user,
+    group   => $group,
+    require => User["${user}"],
+  }
+  file { "/home/${user}/logs":
+    ensure  => directory,
+    mode    => '0755',
+    owner   => $user,
+    group   => $group,
+    require => User["${user}"],
+  }
+  file { "/home/${user}/logs/runsvdir":
+    ensure  => directory,
+    mode    => '0755',
+    require => File["/home/${user}/logs"],
+    owner   => $user,
+    group   => $group,
+  }
+  file { "/etc/runit/${user}/log":
+    ensure  => directory,
+    mode    => '0755',
+    require => File["/etc/runit/${user}"],
+  }
+  file { "/etc/runit/${user}/log/down":
+    ensure  => absent,
+    require => File["/etc/runit/${user}/log"],
+  }
+  file { "/etc/runit/${user}/log/run":
+    ensure  => file,
+    content => template('runit/user_log_run.erb'),
+    mode    => '0555',
+    require => File[
+      "/etc/runit/${user}/log",
+      "/etc/runit/${user}/log/down",
+      "/home/${user}/logs/runsvdir"
+    ],
+  }
+
+  service { "runit-${user}":
+    name     => $user,
+    ensure   => 'running',
+    provider => 'runit',
+    path     => '/etc/runit',
+    require  => File["/etc/runit/${user}/run", '/usr/bin/sv'],
+  }
+}
+

@@ -1,0 +1,3 @@
+#!/bin/bash
+exec 2>&1
+exec su -c 'chpst -l /home/<%= user %>/service/.lock runsvdir -P -H /home/<%= user %>/service' <%= user %>
