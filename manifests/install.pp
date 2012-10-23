@@ -1,6 +1,15 @@
 class runit::install {
-  realize( File['runit-rpm'] )
-  realize( Package['runit'] )
+  file { 'runit-rpm':
+    ensure  => file,
+    path    => '/root/runit-2.1.1-6.el6.x86_64.rpm',
+    source  => 'puppet:///files/runit-2.1.1-6.el6.x86_64.rpm',
+  }
+  package { 'runit':
+    ensure   => installed,
+    provider => 'rpm',
+    source   => '/root/runit-2.1.1-6.el6.x86_64.rpm',
+    require  => File['runit-rpm'],
+  }
   file { '/usr/bin/sv':
     ensure => link,
     target => '/sbin/sv',
