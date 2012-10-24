@@ -1,13 +1,15 @@
-class runit::install {
+class runit::install (
+  $package_file = 'runit-2.1.1-6.el6.x86_64.rpm'
+) {
   file { 'runit-rpm':
     ensure  => file,
-    path    => '/root/runit-2.1.1-6.el6.x86_64.rpm',
-    source  => 'puppet:///files/runit-2.1.1-6.el6.x86_64.rpm',
+    path    => "/root/${package_file}",
+    source  => "puppet:///files/${package_file}",
   }
   package { 'runit':
     ensure   => installed,
     provider => 'rpm',
-    source   => '/root/runit-2.1.1-6.el6.x86_64.rpm',
+    source   => "/root/${package_file}",
     require  => File['runit-rpm'],
   }
   file { '/usr/bin/sv':
