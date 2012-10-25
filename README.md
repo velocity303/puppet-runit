@@ -56,10 +56,10 @@ then place the RPM in /var/lib/puppet/files.
 
 ## runit
 
-This module installs Runit and sets things up for user services so must be
-called before runit::user is.
+Installs Runit and sets things up for user services so must be called 
+before runit::user is.
 
-Normally this modules is just included:
+Normally this module is just included:
 
     include runit
 
