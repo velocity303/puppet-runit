@@ -2,7 +2,7 @@
 
 Puppet module to create user services linked to init
 
-== User services?
+== User services
 
 System services managed by root get automatically started at boot and restarted
 if they fail. And, there is a consistent way to manage them: service
@@ -34,25 +34,43 @@ If the process writes output to stdout or stderr this can be fed through a
 managed log process called svlogd which takes care of prefixing timestamps and
 rotating logs according to a policy - for example daily.
 
-== runit
+== Runit package
 
-Include this module to install Runit and prepare for user services:
+Runit is not normally packaged by distributions so you will need to clone the
+git repository and build the RPM yourself - for example:
 
-    include runit
+    # yum install git rpm-build rpmdevtools gcc glibc-static make
+    # git clone https://github.com/imeyer/runit-rpm.git
+    # cd runit-rpm
+    # ./build.sh
+    # cp /root/rpmbuild/RPMS/x86_64/runit-2.1.1-6.el6.x86_64.rpm \
+    /var/lib/puppet/files/
 
-=== Package
-
-Runit is not normally packaged by distributions so this module expects that the
-RPM has been placed in the directory specified by the files section of the
-Puppet file server.  For example if fileserver.conf has:
+This module expects that the RPM has been placed in the directory specified by
+the files section of the Puppet file server.  For example if fileserver.conf
+has:
 
      [files]
      path /var/lib/puppet/files
 
 then place the RPM in /var/lib/puppet/files.  
 
-The RPM can be downloaded from TODO.  Alternatively you can clone the git
-repository and build the RPM yourself.
+== runit
+
+This module installs Runit and sets things up for user services so must be
+called before runit::user is.
+
+Normally this modules is just included:
+
+    include runit
+
+which is the same as:
+
+    class { 'runit': package_file => 'runit-2.1.1-6.el6.x86_64.rpm' }
+
+To use a different package file set the package_file parameter:
+
+    class { 'runit': package_file => 'runit-1.8.0-1.el6.x86_64.rpm' }
 
 == runit::user
 
