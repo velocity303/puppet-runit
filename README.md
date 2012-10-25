@@ -1,19 +1,18 @@
-= puppet-runit
+## puppet-runit
 
 Puppet module to create user services linked to init
 
-== User services
+### User services
 
 System services managed by root get automatically started at boot and restarted
 if they fail. And, there is a consistent way to manage them: service
-start|stop|restart|status <service name>`.
-
-The idea of user services is to provide the same for user processes.
+`start|stop|restart|status <service name>`.  The idea of user services is to 
+provide the same for user processes.
 
 Each user has a service directory under their home directory that is managed by
 their own runsvdir process.  This runsvdir process is linked to init so will be
 started at boot and restarted if it fails.  Similarly any user services
-configured under $HOME/service will be started at boot and restarting if they
+configured under $HOME/service will be started at boot and restarted if they
 fail, if configured to do so.  All services are managed in a consistent way:
 `sv start|stop|restart|status <service_name>`.
 
@@ -34,7 +33,7 @@ If the process writes output to stdout or stderr this can be fed through a
 managed log process called svlogd which takes care of prefixing timestamps and
 rotating logs according to a policy - for example daily.
 
-== Runit package
+## Runit package
 
 Runit is not normally packaged by distributions so you will need to clone Ian
 Meyer's git repository and build the RPM yourself - for example:
@@ -55,14 +54,14 @@ has:
 
 then place the RPM in /var/lib/puppet/files.  
 
-== runit
+## runit
 
 This module installs Runit and sets things up for user services so must be
 called before runit::user is - for example:
 
     class { 'runit': package_file => 'runit-2.1.1-6.el6.x86_64.rpm' }
 
-== runit::user
+## runit::user
 
 Used to set up a service directory for a user - for example:
 
