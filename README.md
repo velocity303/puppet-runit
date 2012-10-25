@@ -36,8 +36,8 @@ rotating logs according to a policy - for example daily.
 
 == Runit package
 
-Runit is not normally packaged by distributions so you will need to clone the
-git repository and build the RPM yourself - for example:
+Runit is not normally packaged by distributions so you will need to clone Ian
+Meyer's git repository and build the RPM yourself - for example:
 
     # yum install git rpm-build rpmdevtools gcc glibc-static make
     # git clone https://github.com/imeyer/runit-rpm.git
@@ -58,19 +58,9 @@ then place the RPM in /var/lib/puppet/files.
 == runit
 
 This module installs Runit and sets things up for user services so must be
-called before runit::user is.
-
-Normally this modules is just included:
-
-    include runit
-
-which is the same as:
+called before runit::user is - for example:
 
     class { 'runit': package_file => 'runit-2.1.1-6.el6.x86_64.rpm' }
-
-To use a different package file set the package_file parameter:
-
-    class { 'runit': package_file => 'runit-1.8.0-1.el6.x86_64.rpm' }
 
 == runit::user
 
@@ -79,8 +69,5 @@ Used to set up a service directory for a user - for example:
     runit::user { 'kburdis': group => 'kburdis' }
 
 will create /home/kburdis/service managed by a runsvdir process with any logs
-from this process written to /home/kburdis/logs/runsvdir/current.
-
-The user (or other Puppet modules) can then create services under
-$HOME/service.
-
+from this process written to /home/kburdis/logs/runsvdir/current.  The user (or
+other Puppet modules) can then create services under $HOME/service.
