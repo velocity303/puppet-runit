@@ -1,7 +1,7 @@
 define runit::user (
   $group = ''
 ) {
-  $user = $name
+  $user = $title
   User {
     owner   => root,
     group   => root,
@@ -9,20 +9,17 @@ define runit::user (
   file { "/etc/runit/${user}":
     ensure  => directory,
     mode    => '0755',
-    require => File['/etc/runit'],
+    require => Class['runit::install'],
   }
   file { "/etc/runit/${user}/down":
     ensure  => absent,
-    require => File["/etc/runit/${user}"],
+    require => Class['runit::install'],
   }
   file { "/etc/runit/${user}/run":
     ensure  => file,
-    content => template('runit/user_run.erb'),
     mode    => '0555',
-    require => [
-      File["/etc/runit/${user}", "/etc/runit/${user}/down"],
-      Class['runit::install']
-    ],
+    content => template('runit/user_run.erb'),
+    require => Class['runit::install'],
   }
 
   file { "/home/${user}/service":
@@ -42,9 +39,9 @@ define runit::user (
   file { "/home/${user}/logs/runsvdir":
     ensure  => directory,
     mode    => '0755',
-    require => File["/home/${user}/logs"],
     owner   => $user,
     group   => $group,
+    require => File["/home/${user}/logs"],
   }
   file { "/etc/runit/${user}/log":
     ensure  => directory,
@@ -57,8 +54,8 @@ define runit::user (
   }
   file { "/etc/runit/${user}/log/run":
     ensure  => file,
-    content => template('runit/user_log_run.erb'),
     mode    => '0555',
+    content => template('runit/user_log_run.erb'),
     require => File[
       "/etc/runit/${user}/log",
       "/etc/runit/${user}/log/down",
