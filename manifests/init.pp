@@ -1,5 +1,5 @@
 class runit (
-  $package_name = undef
+  $package_file = undef
 ) {
   # Only run on RedHat derived systems.
   case $::osfamily {
@@ -9,7 +9,7 @@ class runit (
     }
   }
   class { 'runit::install':
-    package_name => $package_name,
+    package_file => $package_file,
   }
   include runit::service
 }
