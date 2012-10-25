@@ -1,7 +1,14 @@
 define runit::user (
   $group = ''
 ) {
+  include runit
   $user = $title
+  if $group == undef {
+    $_group = $user
+  }
+  else {
+    $_group = $group
+  }
   User {
     owner   => root,
     group   => root,
@@ -21,28 +28,6 @@ define runit::user (
     content => template('runit/user_run.erb'),
     require => Class['runit::install'],
   }
-
-  file { "/home/${user}/service":
-    ensure  => directory,
-    mode    => '0755',
-    owner   => $user,
-    group   => $group,
-    require => User[$user],
-  }
-  file { "/home/${user}/logs":
-    ensure  => directory,
-    mode    => '0755',
-    owner   => $user,
-    group   => $group,
-    require => User[$user],
-  }
-  file { "/home/${user}/logs/runsvdir":
-    ensure  => directory,
-    mode    => '0755',
-    owner   => $user,
-    group   => $group,
-    require => File["/home/${user}/logs"],
-  }
   file { "/etc/runit/${user}/log":
     ensure  => directory,
     mode    => '0755',
@@ -61,6 +46,28 @@ define runit::user (
       "/etc/runit/${user}/log/down",
       "/home/${user}/logs/runsvdir"
     ],
+  }
+
+  file { "/home/${user}/service":
+    ensure  => directory,
+    mode    => '0755',
+    owner   => $user,
+    group   => $_group,
+    require => User[$user],
+  }
+  file { "/home/${user}/logs":
+    ensure  => directory,
+    mode    => '0755',
+    owner   => $user,
+    group   => $_group,
+    require => User[$user],
+  }
+  file { "/home/${user}/logs/runsvdir":
+    ensure  => directory,
+    mode    => '0755',
+    owner   => $user,
+    group   => $_group,
+    require => File["/home/${user}/logs"],
   }
 
   service { "runit-${user}":
