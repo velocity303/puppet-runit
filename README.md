@@ -6,14 +6,13 @@ Puppet module to create user services linked to init
 
 System services managed by root get automatically started at boot and restarted
 if they fail. And, there is a consistent way to manage them: service
-start|stop|restart|status <service name>`.
-
-The idea of user services is to provide the same for user processes.
+`start|stop|restart|status <service name>`.  The idea of user services is to 
+provide the same for user processes.
 
 Each user has a service directory under their home directory that is managed by
 their own runsvdir process.  This runsvdir process is linked to init so will be
 started at boot and restarted if it fails.  Similarly any user services
-configured under $HOME/service will be started at boot and restarting if they
+configured under $HOME/service will be started at boot and restarted if they
 fail, if configured to do so.  All services are managed in a consistent way:
 `sv start|stop|restart|status <service_name>`.
 
