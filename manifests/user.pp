@@ -15,17 +15,14 @@ define runit::user (
   file { "/etc/runit/${user}":
     ensure  => directory,
     mode    => '0755',
-    require => Class['runit'],
   }
   file { "/etc/runit/${user}/down":
     ensure  => absent,
-    require => Class['runit'],
   }
   file { "/etc/runit/${user}/run":
     ensure  => file,
     mode    => '0555',
     content => template('runit/user_run.erb'),
-    require => Class['runit'],
   }
   file { "/etc/runit/${user}/log":
     ensure  => directory,
@@ -52,14 +49,12 @@ define runit::user (
     mode    => '0755',
     owner   => $user,
     group   => $_group,
-    require => User[$user],
   }
   file { "/home/${user}/logs":
     ensure  => directory,
     mode    => '0755',
     owner   => $user,
     group   => $_group,
-    require => User[$user],
   }
   file { "/home/${user}/logs/runsvdir":
     ensure  => directory,
@@ -74,7 +69,6 @@ define runit::user (
     name     => $user,
     provider => 'runit',
     path     => '/etc/runit',
-    require  => File["/etc/runit/${user}/run", '/usr/bin/sv'],
+    require  => File["/etc/runit/${user}/run"],
   }
 }
-
