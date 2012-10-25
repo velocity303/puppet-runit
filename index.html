@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Puppet-runit : Puppet module to manage Runit user services" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Puppet-runit</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/erwbgy/puppet-runit">View on GitHub</a>
+
+          <h1 id="project_title">Puppet-runit</h1>
+          <h2 id="project_tagline">Puppet module to manage Runit user services</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/erwbgy/puppet-runit/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/erwbgy/puppet-runit/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>puppet-runit</h2>
+
+<p>Puppet module to create user services linked to init</p>
+
+<h3>User services</h3>
+
+<p>System services managed by root get automatically started at boot and restarted
+if they fail. And, there is a consistent way to manage them: service
+<code>start|stop|restart|status &lt;service name&gt;</code>.  The idea of user services is to 
+provide the same for user processes.</p>
+
+<p>Each user has a service directory under their home directory that is managed by
+their own runsvdir process.  This runsvdir process is linked to init so will be
+started at boot and restarted if it fails.  Similarly any user services
+configured under $HOME/service will be started at boot and restarted if they
+fail, if configured to do so.  All services are managed in a consistent way:
+<code>sv start|stop|restart|status &lt;service_name&gt;</code>.</p>
+
+<p>Each runit service has a subdirectory under $HOME/service which is the same of
+the service.  Inside this directory is a script called <em>run</em> that starts the
+process running in the <em>foreground</em>, with the final command starting with
+<em>exec</em>.</p>
+
+<p>Optionally a service can have a <em>finish</em> script that is executed when the
+service stops running - for example because the process died or the user
+requested so.  This can be useful to diagnose failures and configure the number
+of restarts in a time period.</p>
+
+<p>If a <em>down</em> file exists in the service directory then the service will not be
+automatically restarted if it fails or a boot time.</p>
+
+<p>If the process writes output to stdout or stderr this can be fed through a
+managed log process called svlogd which takes care of prefixing timestamps and
+rotating logs according to a policy - for example daily.</p>
+
+<h2>Runit package</h2>
+
+<p>Runit is not normally packaged by distributions so you will need to clone the
+git repository and build the RPM yourself - for example:</p>
+
+<pre><code># yum install git rpm-build rpmdevtools gcc glibc-static make
+# git clone https://github.com/imeyer/runit-rpm.git
+# cd runit-rpm
+# ./build.sh
+# cp /root/rpmbuild/RPMS/x86_64/runit-2.1.1-6.el6.x86_64.rpm \
+/var/lib/puppet/files/
+</code></pre>
+
+<p>This module expects that the RPM has been placed in the directory specified by
+the files section of the Puppet file server.  For example if fileserver.conf
+has:</p>
+
+<pre><code> [files]
+ path /var/lib/puppet/files
+</code></pre>
+
+<p>then place the RPM in /var/lib/puppet/files.  </p>
+
+<h2>runit</h2>
+
+<p>Installs Runit and sets things up for user services so must be called 
+before runit::user is.</p>
+
+<p>Normally this module is just included:</p>
+
+<pre><code>include runit
+</code></pre>
+
+<p>which is the same as:</p>
+
+<pre><code>class { 'runit': package_file =&gt; 'runit-2.1.1-6.el6.x86_64.rpm' }
+</code></pre>
+
+<p>To use a different package file set the package_file parameter:</p>
+
+<pre><code>class { 'runit': package_file =&gt; 'runit-1.8.0-1.el6.x86_64.rpm' }
+</code></pre>
+
+<h2>runit::user</h2>
+
+<p>Used to set up a service directory for a user - for example:</p>
+
+<pre><code>runit::user { 'kburdis': group =&gt; 'kburdis' }
+</code></pre>
+
+<p>will create /home/kburdis/service managed by a runsvdir process with any logs
+from this process written to /home/kburdis/logs/runsvdir/current.</p>
+
+<p>The user (or other Puppet modules) can then create services under
+$HOME/service.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Puppet-runit maintained by <a href="https://github.com/erwbgy">erwbgy</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
