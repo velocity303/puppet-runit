@@ -1,7 +1,6 @@
 define runit::user (
   $group = ''
 ) {
-  include runit
   $user = $title
   if $group == undef {
     $_group = $user
@@ -16,17 +15,17 @@ define runit::user (
   file { "/etc/runit/${user}":
     ensure  => directory,
     mode    => '0755',
-    require => Class['runit::install'],
+    require => Class['runit'],
   }
   file { "/etc/runit/${user}/down":
     ensure  => absent,
-    require => Class['runit::install'],
+    require => Class['runit'],
   }
   file { "/etc/runit/${user}/run":
     ensure  => file,
     mode    => '0555',
     content => template('runit/user_run.erb'),
-    require => Class['runit::install'],
+    require => Class['runit'],
   }
   file { "/etc/runit/${user}/log":
     ensure  => directory,
