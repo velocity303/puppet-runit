@@ -35,8 +35,8 @@ rotating logs according to a policy - for example daily.
 
 ## Runit package
 
-Runit is not normally packaged by distributions so you will need to clone Ian
-Meyer's git repository and build the RPM yourself - for example:
+Runit is not normally packaged by distributions so you will likely need to
+clone Ian Meyer's git repository and build the RPM yourself - for example:
 
     # yum install git rpm-build rpmdevtools gcc glibc-static make
     # git clone https://github.com/imeyer/runit-rpm.git
@@ -46,7 +46,7 @@ Meyer's git repository and build the RPM yourself - for example:
     /var/lib/puppet/files/
 
 This module expects that the RPM has been placed in the directory specified by
-the files section of the Puppet file server.  For example if fileserver.conf
+the _files_ section of the Puppet file server.  For example if fileserver.conf
 has:
 
      [files]
@@ -56,16 +56,26 @@ then place the RPM in /var/lib/puppet/files.
 
 ## runit
 
-This module installs Runit and sets things up for user services so must be
-called before runit::user is - for example:
+This module installs Runit and sets things up for user services.  The
+recommended usage is to place the configuration under a runit hash in hiera and
+just include the runit module in your puppet configuration:
 
-    class { 'runit': package_file => 'runit-2.1.1-6.el6.x86_64.rpm' }
+    include runit
+
+Example hiera config:
+
+    runit:
+      package_file: runit-2.1.1-6.el6.x86_64.rpm
+      users: [ 'apprun1', 'apprun2' ]
+      
+This installs runit and calls runit::user to configure user services for the
+apprun1 and apprun2 users.
 
 ## runit::user
 
 Used to set up a service directory for a user - for example:
 
-    runit::user { 'kburdis': group => 'kburdis' }
+    runit::user { 'kburdis': }
 
 will create /home/kburdis/service managed by a runsvdir process with any logs
 from this process written to /home/kburdis/logs/runsvdir/current.  The user (or
