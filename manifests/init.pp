@@ -11,11 +11,17 @@ class runit (
     }
   }
   if $use_hiera {
-    $runit = hiera_hash('runit')
-    class { 'runit::install':
-      package_file => $runit['package_file'] ? {
-        undef   => $package_file,
-        default => $runit['package_file'],
+    $runit = hiera_hash('runit', undef)
+    if $runit {
+      class { 'runit::install':
+        package_file => $runit['package_file'] ? {
+          undef   => $package_file,
+          default => $runit['package_file'],
+        }
+      }
+      include runit::service
+      if $runit['users'] {
+        create_resources( 'runit::user', $runit['users'] )
       }
     }
   }
@@ -23,7 +29,7 @@ class runit (
     class { 'runit::install':
       package_file => $package_file,
     }
+    include runit::service
+    create_resources( 'runit::user', $users )
   }
-  include runit::service
-  create_resources( 'runit::user', $users )
 }
