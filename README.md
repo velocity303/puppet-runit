@@ -2,7 +2,52 @@
 
 Puppet module to create user services linked to init
 
-### User services
+## runit
+
+This module installs Runit and sets things up for user services.  The
+recommended usage is to place the configuration under a runit hash in hiera and
+just include the runit module in your puppet configuration:
+
+    include runit
+
+Example hiera config:
+
+    runit:
+      package_file: runit-2.1.1-6.el6.x86_64.rpm
+      users:
+        'kburdis':
+          group: 'admins'
+        'fbloggs':
+          group: 'users'
+      
+This installs the runit package and configured runit.  It then calls
+runit::user to configure user services for the kburdis and fbloggs users.
+
+### Parameters
+
+*package_file*: the name of the RPM package file to install - see the Runit
+Package section below. Required.
+
+*users*: a list of users to set up user services for - see the User Services
+section below. Optional.
+
+## runit::user
+
+Used to set up a service directory for a user - for example:
+
+    runit::user { 'kburdis': group => 'users' }
+
+will create /home/kburdis/service managed by a runsvdir process with any logs
+from this process written to /home/kburdis/logs/runsvdir/current.  The user (or
+other Puppet modules) can then create services under $HOME/service.
+
+### Parameters
+
+The title is the user's username - for example 'kburdis' in the example above.
+
+*group*: the group the runit files under the user's home directory will be owned by.  Defaults to the same as the username.
+
+## User services
 
 System services managed by root get automatically started at boot and restarted
 if they fail. And, there is a consistent way to manage them: service
@@ -33,7 +78,7 @@ If the process writes output to stdout or stderr this can be fed through a
 managed log process called svlogd which takes care of prefixing timestamps and
 rotating logs according to a policy - for example daily.
 
-## Runit package
+## Runit Package
 
 Runit is not normally packaged by distributions so you will likely need to
 clone Ian Meyer's git repository and build the RPM yourself - for example:
@@ -54,29 +99,3 @@ has:
 
 then place the RPM in /var/lib/puppet/files.  
 
-## runit
-
-This module installs Runit and sets things up for user services.  The
-recommended usage is to place the configuration under a runit hash in hiera and
-just include the runit module in your puppet configuration:
-
-    include runit
-
-Example hiera config:
-
-    runit:
-      package_file: runit-2.1.1-6.el6.x86_64.rpm
-      users: [ 'apprun1', 'apprun2' ]
-      
-This installs runit and calls runit::user to configure user services for the
-apprun1 and apprun2 users.
-
-## runit::user
-
-Used to set up a service directory for a user - for example:
-
-    runit::user { 'kburdis': }
-
-will create /home/kburdis/service managed by a runsvdir process with any logs
-from this process written to /home/kburdis/logs/runsvdir/current.  The user (or
-other Puppet modules) can then create services under $HOME/service.
