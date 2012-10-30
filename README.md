@@ -99,3 +99,8 @@ has:
 
 then place the RPM in /var/lib/puppet/files.  
 
+## Support
+
+License: Apache License, Version 2.0
+
+GitHub URL: https://github.com/erwbgy/puppet-runit
