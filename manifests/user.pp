@@ -64,11 +64,9 @@ define runit::user (
     require => File["/home/${user}/logs"],
   }
 
-  service { "runit-${user}":
-    ensure   => 'running',
-    name     => $user,
-    provider => 'runit',
-    path     => '/etc/runit',
+  file { "/etc/service/${user}":
+    ensure   => link,
+    target   => "/etc/runit/${user}",
     require  => File["/etc/runit/${user}/run"],
   }
 }
