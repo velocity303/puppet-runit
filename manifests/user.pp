@@ -1,5 +1,17 @@
-define runit::user {
+define runit::user (
+  $group = ''
+) {
   $user = $title
+  if $group == undef {
+    $_group = $user
+  }
+  else {
+    $_group = $group
+  }
+  User {
+    owner   => root,
+    group   => root,
+  }
   file { "/etc/runit/${user}":
     ensure  => directory,
     mode    => '0755',
@@ -36,16 +48,19 @@ define runit::user {
     ensure  => directory,
     mode    => '0755',
     owner   => $user,
+    group   => $_group,
   }
   file { "/home/${user}/logs":
     ensure  => directory,
     mode    => '0755',
     owner   => $user,
+    group   => $_group,
   }
   file { "/home/${user}/logs/runsvdir":
     ensure  => directory,
     mode    => '0755',
     owner   => $user,
+    group   => $_group,
     require => File["/home/${user}/logs"],
   }
 
