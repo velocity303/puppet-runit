@@ -1,11 +1,8 @@
 name    'erwbgy-runit'
-version '0.0.1'
-source 'UNKNOWN'
+version '0.1.0'
+source 'git@github.com:erwbgy/puppet-runit.git'
 author 'erwbgy'
 license 'Apache License, Version 2.0'
-summary 'UNKNOWN'
-description 'UNKNOWN'
-project_page 'git@github.com:erwbgy/puppet-runit.git'
-
-## Add dependencies, if any:
-# dependency 'username/name', '>= 1.2.0'
+summary 'Puppet module to create user services linked to init'
+description 'Installs and configures Runit and sets up managed services for normal users'
+project_page 'https://github.com/erwbgy/puppet-runit'
