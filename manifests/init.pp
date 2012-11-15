@@ -11,6 +11,6 @@ class runit (
   }
   include runit::install
   include runit::service
-  $users = hiera_array('runit::users', $users)
-  create_resources('runit::user', $users)
+  $config = hiera_hash('runit::users', $users)
+  create_resources('runit::user', $config)
 }

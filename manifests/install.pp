@@ -21,10 +21,10 @@ class runit::install {
   }
   file { '/etc/profile.d/runit.sh':
     ensure  => present,
-    content => 'export SVDIR=\$HOME/service\n',
+    content => "export SVDIR=\$HOME/service\n",
   }
   file { '/etc/profile.d/runit.csh':
     ensure  => present,
-    content => 'setenv SVDIR \$HOME/service\n',
+    content => "setenv SVDIR \$HOME/service\n",
   }
 }
