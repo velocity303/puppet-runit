@@ -1,9 +1,5 @@
-class runit::install (
-  $package_file = undef,
-) {
-  if $package_file == undef {
-    fail('runit::install package_file required')
-  }
+class runit::install {
+  $package_file = $::runit::package_file
   file { 'runit-rpm':
     ensure  => file,
     path    => "/root/${package_file}",
