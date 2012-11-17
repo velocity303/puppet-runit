@@ -41,14 +41,14 @@ EXIT_CODE=$1
 EXIT_STATUS=$2
  
 # The minimum delay (in seconds) between automatic restarts
-MIN_AUTO_RESTART_INTERVAL=<% if restart_interval %><%= restart_interval %><% else %>30<% end %>
+MIN_AUTO_RESTART_INTERVAL=<%= restart_interval %>
  
 # The maximum number of automatic restarts allowed
-MAX_AUTO_RESTART_COUNT=<% if restart_count %><%= restart_count %><% else %>3<% end %>
+MAX_AUTO_RESTART_COUNT=<%= restart_count %>
  
 # Reset the restart count if AUTO_RESTART_COUNT_CLEAR_INTERVAL seconds
 # have elapsed since the last automatic restart.
-AUTO_RESTART_COUNT_CLEAR_INTERVAL=<% if clear_interval %><%= clear_interval %><% else %>300<% end %>
+AUTO_RESTART_COUNT_CLEAR_INTERVAL=<%= clear_interval %>
  
 export DESCRIPTION EXIT_CODE EXIT_STATUS MIN_AUTO_RESTART_INTERVAL MAX_AUTO_RESTART_COUNT AUTO_RESTART_COUNT_CLEAR_INTERVAL
 
