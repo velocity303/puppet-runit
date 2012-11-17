@@ -22,7 +22,7 @@ define runit::user (
   file { "/etc/runit/${user}/run":
     ensure  => file,
     mode    => '0555',
-    content => template('runit/user_run.erb'),
+    content => template('runit/user/run.erb'),
   }
   file { "/etc/runit/${user}/log":
     ensure  => directory,
@@ -36,7 +36,7 @@ define runit::user (
   file { "/etc/runit/${user}/log/run":
     ensure  => file,
     mode    => '0555',
-    content => template('runit/user_log_run.erb'),
+    content => template('runit/user/log_run.erb'),
     require => File[
       "/etc/runit/${user}/log",
       "/etc/runit/${user}/log/down",
