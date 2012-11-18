@@ -1,14 +1,14 @@
 #!/bin/bash
  
-# Assume that the following variables are set:
-#
-# DESCRIPTION: A brief description of the service
+# The following variables are set by Runit:
 #
 # EXIT_CODE: ./run's exit code
 #
 # EXIT_STATUS: The least significant byte of the exit status as determined by
 #  waitpid(2); for instance it is 0 if ./run exited normally, and the signal
 #  number if ./run was terminated by a signal.
+#
+# The following configuration variables must be set:
 #
 # MIN_AUTO_RESTART_INTERVAL: The minimum delay (in seconds) between automatic restarts
 #
@@ -29,9 +29,6 @@
 
 ### Configuration
 
-# A brief description of the service
-DESCRIPTION="<%= description %>"
- 
 # ./run's exit code
 EXIT_CODE=$1
  
@@ -50,11 +47,11 @@ MAX_AUTO_RESTART_COUNT=<%= restart_count %>
 # have elapsed since the last automatic restart.
 AUTO_RESTART_COUNT_CLEAR_INTERVAL=<%= clear_interval %>
  
-export DESCRIPTION EXIT_CODE EXIT_STATUS MIN_AUTO_RESTART_INTERVAL MAX_AUTO_RESTART_COUNT AUTO_RESTART_COUNT_CLEAR_INTERVAL
+export EXIT_CODE EXIT_STATUS MIN_AUTO_RESTART_INTERVAL MAX_AUTO_RESTART_COUNT AUTO_RESTART_COUNT_CLEAR_INTERVAL
 
 ### Normally no changes should be made after this point
  
-echo "$DESCRIPTION finish; exit code: $EXIT_CODE; exit status: $EXIT_STATUS"
+echo "<%= service %> finish; exit code: $EXIT_CODE; exit status: $EXIT_STATUS"
 
 if test $EXIT_CODE -eq 0 -a $EXIT_STATUS -eq 0
 then

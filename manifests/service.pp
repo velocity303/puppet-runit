@@ -1,7 +1,6 @@
 define runit::service  (
   $user             = undef,
   $group            = undef,
-  $description      = undef,
   $restart_interval = 30,
   $restart_count    = 3,
   $clear_interval   = 300,
@@ -29,7 +28,7 @@ define runit::service  (
     notify  => Exec["do-not-start-${user}-${service}"],
   }
   exec { "do-not-start-${user}-${service}":
-    command     => "/usr/bin/touch ${home}/${user}/service/${service}/down",
+    command     => "/bin/touch ${home}/${user}/service/${service}/down",
     creates     => "${home}/${user}/service/${service}/down",
     refreshonly => true,
   }
