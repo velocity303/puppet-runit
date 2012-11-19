@@ -2,25 +2,29 @@
 
 Puppet module to create user services linked to init
 
+Currently only works on RedHat-like systems.
+
 ## runit
 
-This module installs Runit and sets things up for user services.  The
-recommended usage is to place the configuration under a runit hash in hiera and
-just include the runit module in your puppet configuration:
+This module installs Runit and sets up for user services.  Configured users can
+then set up managed services under their home directory that work similarly to
+system services.
+
+The recommended usage is to place the configuration under in a hiera config
+file and just include the runit module in your puppet configuration:
 
     include runit
 
 Example hiera config:
 
-    runit:
-      package_file: runit-2.1.1-6.el6.x86_64.rpm
-      users:
-        'kburdis':
-          group: 'admins'
-        'fbloggs':
-          group: 'users'
+    runit:package_file: runit-2.1.1-6.el6.x86_64.rpm
+    runit::users:
+      'kburdis':
+        group: 'admins'
+      'fbloggs':
+        group: 'users'
       
-This installs the runit package and configured runit.  It then calls
+This installs the runit package and configures runit.  It then calls
 runit::user to configure user services for the kburdis and fbloggs users.
 
 ### Parameters
@@ -43,16 +47,71 @@ other Puppet modules) can then create services under $HOME/service.
 
 ### Parameters
 
-The title is the user's username - for example 'kburdis' in the example above.
+*title*: The title is the user's username - for example 'kburdis' in the example above.
 
-*group*: the group the runit files under the user's home directory will be owned by.  Defaults to the same as the username.
+*group*: The group the runit files under the user's home directory will be
+owned by.  Defaults to the same as the username.
+
+## runit::service
+
+Example:
+
+    class runit::service { 'tomcat': 
+      user  => 'kburdis,
+      group => 'users,
+    }
+
+Create a service directory under $HOME/runit with:
+
+* Stdout logged to subdirectory under $HOME/logs using svlogd
+
+* A configurable number of restarts within a certain restart interval
+
+The user just needs to supply a run script that:
+
+* Redirects stderr to stdout
+
+* Runs the final command in the forefound prefixed with 'exec'
+
+and link the service directory under $HOME/service - for example:
+
+  $ ln -s $HOME/runit/tomcat $HOME/service/tomcat
+
+### Parameters
+
+*title*: The title is the service name (eg. tomcat in the example above)
+
+*user*: The user running the service (used for file location and ownership)
+
+*group*: The group of the user running the service (used for file ownership)
+
+*restart_interval*: The minimum delay (in seconds) between automatic restarts.
+Default: 30
+
+*restart_count*: The maximum number of automatic restarts allowed. Default: 3
+
+*clear_interval*: Reset the restart count if this number of seconds have
+elapsed since the last automatic restart.  Default: 300
+
+*log_size*: The size of the log file (in bytes) before it is rotated. Default:
+1000000000
+
+*log_max_files*: The maximum number of old log files to keep. Default: 30
+
+*log_min_files*: The minimum number of files to keep (regardless of lack of
+disk space). Default: 2
+
+*log_rotate_time*: The age of the log file (in seconds) before it is rotated.
+Default: 86400 (1 day)
+
+*home*: The directory under which user home directories are located. Default: '/home'
 
 ## User services
 
 System services managed by root get automatically started at boot and restarted
 if they fail. And, there is a consistent way to manage them: service
-`start|stop|restart|status <service name>`.  The idea of user services is to 
-provide the same for user processes.
+`start|stop|restart|status <service name>`.  The idea of user services is to
+provide the same for non-root user processes.
 
 Each user has a service directory under their home directory that is managed by
 their own runsvdir process.  This runsvdir process is linked to init so will be
