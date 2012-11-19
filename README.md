@@ -1,4 +1,4 @@
-## puppet-runit
+# puppet-runit
 
 Puppet module to create user services linked to init
 
