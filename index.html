@@ -35,7 +35,55 @@
 
 <p>Puppet module to create user services linked to init</p>
 
-<h3>User services</h3>
+<h2>runit</h2>
+
+<p>This module installs Runit and sets things up for user services.  The
+recommended usage is to place the configuration under a runit hash in hiera and
+just include the runit module in your puppet configuration:</p>
+
+<pre><code>include runit
+</code></pre>
+
+<p>Example hiera config:</p>
+
+<pre><code>runit:
+  package_file: runit-2.1.1-6.el6.x86_64.rpm
+  users:
+    'kburdis':
+      group: 'admins'
+    'fbloggs':
+      group: 'users'
+</code></pre>
+
+<p>This installs the runit package and configured runit.  It then calls
+runit::user to configure user services for the kburdis and fbloggs users.</p>
+
+<h3>Parameters</h3>
+
+<p><em>package_file</em>: the name of the RPM package file to install - see the Runit
+Package section below. Required.</p>
+
+<p><em>users</em>: a list of users to set up user services for - see the User Services
+section below. Optional.</p>
+
+<h2>runit::user</h2>
+
+<p>Used to set up a service directory for a user - for example:</p>
+
+<pre><code>runit::user { 'kburdis': group =&gt; 'users' }
+</code></pre>
+
+<p>will create /home/kburdis/service managed by a runsvdir process with any logs
+from this process written to /home/kburdis/logs/runsvdir/current.  The user (or
+other Puppet modules) can then create services under $HOME/service.</p>
+
+<h3>Parameters</h3>
+
+<p>The title is the user's username - for example 'kburdis' in the example above.</p>
+
+<p><em>group</em>: the group the runit files under the user's home directory will be owned by.  Defaults to the same as the username.</p>
+
+<h2>User services</h2>
 
 <p>System services managed by root get automatically started at boot and restarted
 if they fail. And, there is a consistent way to manage them: service
@@ -66,10 +114,10 @@ automatically restarted if it fails or a boot time.</p>
 managed log process called svlogd which takes care of prefixing timestamps and
 rotating logs according to a policy - for example daily.</p>
 
-<h2>Runit package</h2>
+<h2>Runit Package</h2>
 
-<p>Runit is not normally packaged by distributions so you will need to clone the
-git repository and build the RPM yourself - for example:</p>
+<p>Runit is not normally packaged by distributions so you will likely need to
+clone Ian Meyer's git repository and build the RPM yourself - for example:</p>
 
 <pre><code># yum install git rpm-build rpmdevtools gcc glibc-static make
 # git clone https://github.com/imeyer/runit-rpm.git
@@ -80,7 +128,7 @@ git repository and build the RPM yourself - for example:</p>
 </code></pre>
 
 <p>This module expects that the RPM has been placed in the directory specified by
-the files section of the Puppet file server.  For example if fileserver.conf
+the <em>files</em> section of the Puppet file server.  For example if fileserver.conf
 has:</p>
 
 <pre><code> [files]
@@ -89,38 +137,11 @@ has:</p>
 
 <p>then place the RPM in /var/lib/puppet/files.  </p>
 
-<h2>runit</h2>
+<h2>Support</h2>
 
-<p>Installs Runit and sets things up for user services so must be called 
-before runit::user is.</p>
+<p>License: Apache License, Version 2.0</p>
 
-<p>Normally this module is just included:</p>
-
-<pre><code>include runit
-</code></pre>
-
-<p>which is the same as:</p>
-
-<pre><code>class { 'runit': package_file =&gt; 'runit-2.1.1-6.el6.x86_64.rpm' }
-</code></pre>
-
-<p>To use a different package file set the package_file parameter:</p>
-
-<pre><code>class { 'runit': package_file =&gt; 'runit-1.8.0-1.el6.x86_64.rpm' }
-</code></pre>
-
-<h2>runit::user</h2>
-
-<p>Used to set up a service directory for a user - for example:</p>
-
-<pre><code>runit::user { 'kburdis': group =&gt; 'kburdis' }
-</code></pre>
-
-<p>will create /home/kburdis/service managed by a runsvdir process with any logs
-from this process written to /home/kburdis/logs/runsvdir/current.</p>
-
-<p>The user (or other Puppet modules) can then create services under
-$HOME/service.</p>
+<p>GitHub URL: <a href="https://github.com/erwbgy/puppet-runit">https://github.com/erwbgy/puppet-runit</a></p>
       </section>
     </div>
 
