@@ -1,6 +1,6 @@
 class runit (
   $package_file = undef,
-  $users        = [],
+  $users        = {}
 ) {
   # Only run on RedHat derived systems.
   case $::osfamily {
