@@ -5,4 +5,3 @@ runit::users:
   wso2is: {}
   jboss1:
     group: jboss
-    down: true
