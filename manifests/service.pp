@@ -1,4 +1,5 @@
 define runit::service  (
+  $service          = undef,
   $user             = undef,
   $group            = undef,
   $restart_interval = 30,
@@ -10,7 +11,6 @@ define runit::service  (
   $log_rotate_time  = 86400,
   $home             = '/home'
 ) {
-  $service = $title
   exec { "${user}-runit-${service}":
     command => "/bin/mkdir -p ${home}/${user}/runit",
     creates => "${home}/${user}/runit",
