@@ -107,7 +107,7 @@ Default: 86400 (1 day)
 *home*: The directory under which user home directories are located. Default: '/home'
 
 *down*: True if the service should not be started automatically as soon as the
-service directory is created. Defaukt: false
+service directory is created. Default: false
 
 ## User services
 
