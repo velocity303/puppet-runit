@@ -9,7 +9,8 @@ define runit::service  (
   $log_max_files    = 30,
   $log_min_files    = 2,
   $log_rotate_time  = 86400,
-  $home             = '/home'
+  $home             = '/home',
+  $down             = false,
 ) {
   exec { "${user}-runit-${service}":
     command => "/bin/mkdir -p ${home}/${user}/runit",
@@ -23,6 +24,15 @@ define runit::service  (
     owner   => $user,
     group   => $group,
     require => Exec["${user}-runit-${service}"],
+  }
+  if $down {
+    file { "${home}/${user}/runit/${service}/down":
+      ensure  => present,
+      mode    => '0440',
+      owner   => $user,
+      group   => $group,
+      require => File["${home}/${user}/runit/${service}"],
+    }
   }
   file { "${home}/${user}/runit/${service}/finish":
     ensure  => present,

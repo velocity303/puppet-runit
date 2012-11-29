@@ -106,6 +106,9 @@ Default: 86400 (1 day)
 
 *home*: The directory under which user home directories are located. Default: '/home'
 
+*down*: True if the service should not be started automatically as soon as the
+service directory is created. Defaukt: false
+
 ## User services
 
 System services managed by root get automatically started at boot and restarted
