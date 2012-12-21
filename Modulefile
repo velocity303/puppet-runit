@@ -1,5 +1,5 @@
 name    'erwbgy-runit'
-version '0.2.1'
+version '0.2.2'
 source 'git@github.com:erwbgy/puppet-runit.git'
 author 'erwbgy'
 license 'Apache License, Version 2.0'
