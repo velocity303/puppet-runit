@@ -1,15 +1,22 @@
 class runit (
+  $basedir      = '/home',
+  $filestore    = 'puppet:///files/runit',
   $package_file = undef,
   $users        = {}
+  $workspace    = '/root/runit',
 ) {
   # Only run on RedHat derived systems.
   case $::osfamily {
     RedHat: { }
     default: {
-      fail('This module currently only supports RedHat-based systems')
+      warn('This module may not work on non-RedHat-based systems')
     }
   }
-  include runit::install
+  class { 'runit::install':
+    basedir   => $basedir,
+    filestore => $filestore,
+    workspace => $workspace,
+  }
   service { 'runsvdir':
     ensure     => running,
     hasstatus  => true,

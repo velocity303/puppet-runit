@@ -1,0 +1,11 @@
+0.3.0:
+
+* Make the basedir under which service directories are created configurable -
+default is '/home'
+
+* Make the filestore where the runit package file is located on the Puppet
+master  configurable - default is 'puppet:///files/runit'
+
+* Make the workspace directory where files are stored on the Puppet agent
+hosts configurable - default is '/root/runit'
+

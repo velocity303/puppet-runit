@@ -1,5 +1,6 @@
 define runit::user (
-  $group = ''
+  $basedir = '/home',
+  $group   = ''
 ) {
   $user = $title
   if $group == undef {
@@ -40,28 +41,28 @@ define runit::user (
     require => File[
       "/etc/runit/${user}/log",
       "/etc/runit/${user}/log/down",
-      "/home/${user}/logs/runsvdir"
+      "${basedir}/${user}/logs/runsvdir"
     ],
   }
 
-  file { "/home/${user}/service":
+  file { "${basedir}/${user}/service":
     ensure  => directory,
     mode    => '0755',
     owner   => $user,
     group   => $_group,
   }
-  file { "/home/${user}/logs":
+  file { "${basedir}/${user}/logs":
     ensure  => directory,
     mode    => '0755',
     owner   => $user,
     group   => $_group,
   }
-  file { "/home/${user}/logs/runsvdir":
+  file { "${basedir}/${user}/logs/runsvdir":
     ensure  => directory,
     mode    => '0755',
     owner   => $user,
     group   => $_group,
-    require => File["/home/${user}/logs"],
+    require => File["${basedir}/${user}/logs"],
   }
 
   file { "/etc/service":

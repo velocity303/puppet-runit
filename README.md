@@ -29,11 +29,20 @@ runit::user to configure user services for the kburdis and fbloggs users.
 
 ### Parameters
 
+*basedir* the base directory under which service directories are created -
+default is '/home' making the service directory '/home/${user}/service'
+
+*filestore* the filestore where the runit package file is located on the Puppet
+master - default is 'puppet:///files/runit'
+
 *package_file*: the name of the RPM package file to install - see the Runit
 Package section below. Required.
 
 *users*: a list of users to set up user services for - see the User Services
 section below. Optional.
+
+*workspace* the workspace directory where files are stored on the Puppet agent
+hosts - default is '/root/runit'
 
 ## runit::user
 
@@ -48,6 +57,9 @@ other Puppet modules) can then create services under $HOME/service.
 ### Parameters
 
 *title*: The title is the user's username - for example 'kburdis' in the example above.
+
+*basedir* the base directory under which service directories are created -
+default is '/home' making the service directory '/home/${user}/service'
 
 *group*: The group the runit files under the user's home directory will be
 owned by.  Defaults to the same as the username.
@@ -104,7 +116,8 @@ disk space). Default: 2
 *log_rotate_time*: The age of the log file (in seconds) before it is rotated.
 Default: 86400 (1 day)
 
-*home*: The directory under which user home directories are located. Default: '/home'
+*home* the base directory under which service directories are created -
+default is '/home' making the service directory '/home/${user}/service'
 
 *down*: True if the service should not be started automatically as soon as the
 service directory is created. Default: false
@@ -152,14 +165,15 @@ clone Ian Meyer's git repository and build the RPM yourself - for example:
     # cp /root/rpmbuild/RPMS/x86_64/runit-2.1.1-6.el6.x86_64.rpm \
     /var/lib/puppet/files/
 
-This module expects that the RPM has been placed in the directory specified by
-the _files_ section of the Puppet file server.  For example if fileserver.conf
-has:
+By default this module expects that the RPM has been placed in the directory
+specified by the _files_ section of the Puppet file server.  For example if
+fileserver.conf has:
 
      [files]
      path /var/lib/puppet/files
 
-then place the RPM in /var/lib/puppet/files.  
+then place the RPM in /var/lib/puppet/files/runit.  This location can be
+changed using the fileserver property.
 
 ## Support
 
