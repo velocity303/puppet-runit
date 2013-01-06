@@ -2,7 +2,7 @@ class runit (
   $basedir      = '/home',
   $filestore    = 'puppet:///files/runit',
   $package_file = undef,
-  $users        = {}
+  $users        = {},
   $workspace    = '/root/runit',
 ) {
   # Only run on RedHat derived systems.
