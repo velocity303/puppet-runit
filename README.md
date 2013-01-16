@@ -32,6 +32,9 @@ runit::user to configure user services for the kburdis and fbloggs users.
 *basedir* the base directory under which service directories are created -
 default is '${home}/${user}'
 
+*logdir* the directory under which log files are written - default is
+'${basedir}/${logs}'
+
 *home* the base directory under which user home directories are located -
 default is '/home'
 
@@ -130,6 +133,10 @@ default is '/home' making the service directory '/home/${user}/service'
 
 *down*: True if the service should not be started automatically as soon as the
 service directory is created. Default: false
+
+*command*: The command to run to start the service.  Default is 'sleep 60' as
+the run script is usually overwritten by another module, but this is useful for
+simple commands.
 
 ## User services
 

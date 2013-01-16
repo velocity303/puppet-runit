@@ -1,4 +1,4 @@
 #!/bin/bash
-LOGDIR=$HOME/logs/<%= service %>
+LOGDIR=<%= @service_logdir %>
 mkdir -p $LOGDIR
 exec svlogd -tt $LOGDIR

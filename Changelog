@@ -5,6 +5,11 @@
 * Set the SVDIR environment variable in the user's $HOME/.bash_profile rather
 than in /etc/profile.d.
 
+* Allow the command to start the service to be specified.  The run script is
+usually overwritten by another module, but this is useful for simple commands.
+
+* Allow the log directory to set rather than always using ${basedir}/logs.
+
 0.3.0:
 
 * Make the basedir under which service directories are created configurable -

@@ -1,9 +1,10 @@
 class runit (
   $basedir      = undef,
+  $logdie       = undef,
   $home         = '/home',
   $filestore    = 'puppet:///files/runit',
   $package_file = undef,
-  $users        = {}
+  $users        = {},
   $workspace    = '/root/runit',
 ) {
   # Only run on RedHat derived systems.

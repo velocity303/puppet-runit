@@ -38,20 +38,20 @@ EXIT_CODE=$1
 EXIT_STATUS=$2
  
 # The minimum delay (in seconds) between automatic restarts
-MIN_AUTO_RESTART_INTERVAL=<%= restart_interval %>
+MIN_AUTO_RESTART_INTERVAL=<%= @restart_interval %>
  
 # The maximum number of automatic restarts allowed
-MAX_AUTO_RESTART_COUNT=<%= restart_count %>
+MAX_AUTO_RESTART_COUNT=<%= @restart_count %>
  
 # Reset the restart count if AUTO_RESTART_COUNT_CLEAR_INTERVAL seconds
 # have elapsed since the last automatic restart.
-AUTO_RESTART_COUNT_CLEAR_INTERVAL=<%= clear_interval %>
+AUTO_RESTART_COUNT_CLEAR_INTERVAL=<%= @clear_interval %>
  
 export EXIT_CODE EXIT_STATUS MIN_AUTO_RESTART_INTERVAL MAX_AUTO_RESTART_COUNT AUTO_RESTART_COUNT_CLEAR_INTERVAL
 
 ### Normally no changes should be made after this point
  
-echo "<%= service %> finish; exit code: $EXIT_CODE; exit status: $EXIT_STATUS"
+echo "<%= @service %> finish; exit code: $EXIT_CODE; exit status: $EXIT_STATUS"
 
 if test $EXIT_CODE -eq 0 -a $EXIT_STATUS -eq 0
 then

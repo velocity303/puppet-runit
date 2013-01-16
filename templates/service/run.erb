@@ -3,9 +3,9 @@
 exec 2>&1
 
 # Announce ourselves
-echo "<%= service %> start"
+echo "<%= @service %> start"
 
 # Set environment variables
 
 # Prefix the final command with exec and ensure it runs in the foreground
-exec sleep 60
+exec "<%= @command %>

@@ -1,7 +1,7 @@
 define runit::user (
-  $basedir = undef,
+  $basedir = $runit::basedir,
   $group   = undef,
-  $home    = '/home',
+  $home    = $runit::home,
 ) {
   $user = $title
   if $basedir == undef {
