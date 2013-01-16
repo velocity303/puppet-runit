@@ -1,7 +1,7 @@
 class runit::install (
-  $basedir   = '/home',
-  $filestore = 'puppet:///files/runit',
-  $workspace = '/root/runit',
+  $basedir,
+  $filestore,
+  $workspace,
 ) {
   if ! defined(File[$workspace]) {
     file { $workspace: 
@@ -29,13 +29,5 @@ class runit::install (
   file { '/etc/runit':
     ensure  => directory,
     mode    => '0755',
-  }
-  file { '/etc/profile.d/runit.sh':
-    ensure  => present,
-    content => "export SVDIR=${basedir}/\$LOGNAME/service\n",
-  }
-  file { '/etc/profile.d/runit.csh':
-    ensure  => present,
-    content => "setenv SVDIR ${basedir}/\$LOGNAME/service\n",
   }
 }

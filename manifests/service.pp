@@ -9,16 +9,24 @@ define runit::service  (
   $log_max_files    = 30,
   $log_min_files    = 2,
   $log_rotate_time  = 86400,
+  $basedir          = undef,
   $home             = '/home',
   $down             = false,
 ) {
+  if $basedir == undef {
+    $_basedir = "${home}/${user}"
+  }
+  else {
+    $_basedir = $basedir
+  }
+
   exec { "${user}-runit-${service}":
-    command => "/bin/mkdir -p ${home}/${user}/runit",
-    creates => "${home}/${user}/runit",
+    command => "/bin/mkdir -p ${_basedir}/runit",
+    creates => "${_basedir}/runit",
     user    => $user,
     group   => $group,
   }
-  file { "${home}/${user}/runit/${service}":
+  file { "${_basedir}/runit/${service}":
     ensure  => directory,
     mode    => '0750',
     owner   => $user,
@@ -26,46 +34,46 @@ define runit::service  (
     require => Exec["${user}-runit-${service}"],
   }
   if $down {
-    file { "${home}/${user}/runit/${service}/down":
+    file { "${_basedir}/runit/${service}/down":
       ensure  => present,
       mode    => '0440',
       owner   => $user,
       group   => $group,
-      require => File["${home}/${user}/runit/${service}"],
+      require => File["${_basedir}/runit/${service}"],
     }
   }
-  file { "${home}/${user}/runit/${service}/finish":
+  file { "${_basedir}/runit/${service}/finish":
     ensure  => present,
     mode    => '0550',
     owner   => $user,
     group   => $group,
     content => template('runit/service/finish.erb'),
     replace => false,
-    require => File["${home}/${user}/runit/${service}"],
+    require => File["${_basedir}/runit/${service}"],
   }
-  file { "${home}/${user}/runit/${service}/log":
+  file { "${_basedir}/runit/${service}/log":
     ensure  => directory,
     mode    => '0750',
     owner   => $user,
     group   => $group,
-    require => File["${home}/${user}/runit/${service}"],
+    require => File["${_basedir}/runit/${service}"],
   }
-  file { "${home}/${user}/runit/${service}/log/run":
+  file { "${_basedir}/runit/${service}/log/run":
     ensure  => present,
     mode    => '0550',
     owner   => $user,
     group   => $group,
     content => template('runit/service/log_run.erb'),
     replace => false,
-    require => File["${home}/${user}/runit/${service}/log"],
+    require => File["${_basedir}/runit/${service}/log"],
   }
-  file { "${home}/${user}/runit/${service}/log/config":
+  file { "${_basedir}/runit/${service}/log/config":
     ensure  => present,
     mode    => '0440',
     owner   => $user,
     group   => $group,
     content => template('runit/service/log_config.erb'),
     replace => false,
-    require => File["${home}/${user}/runit/${service}/log"],
+    require => File["${_basedir}/runit/${service}/log"],
   }
 }

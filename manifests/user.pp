@@ -1,8 +1,15 @@
 define runit::user (
-  $basedir = '/home',
-  $group   = ''
+  $basedir = undef,
+  $group   = undef,
+  $home    = '/home',
 ) {
   $user = $title
+  if $basedir == undef {
+    $_basedir = "${home}/${user}"
+  }
+  else {
+    $_basedir = $basedir
+  }
   if $group == undef {
     $_group = $user
   }
@@ -41,28 +48,28 @@ define runit::user (
     require => File[
       "/etc/runit/${user}/log",
       "/etc/runit/${user}/log/down",
-      "${basedir}/${user}/logs/runsvdir"
+      "${_basedir}/logs/runsvdir"
     ],
   }
 
-  file { "${basedir}/${user}/service":
+  file { "${_basedir}/service":
     ensure  => directory,
     mode    => '0755',
     owner   => $user,
     group   => $_group,
   }
-  file { "${basedir}/${user}/logs":
+  file { "${_basedir}/logs":
     ensure  => directory,
     mode    => '0755',
     owner   => $user,
     group   => $_group,
   }
-  file { "${basedir}/${user}/logs/runsvdir":
+  file { "${_basedir}/logs/runsvdir":
     ensure  => directory,
     mode    => '0755',
     owner   => $user,
     group   => $_group,
-    require => File["${basedir}/${user}/logs"],
+    require => File["${_basedir}/logs"],
   }
 
   file { "/etc/service":
@@ -72,5 +79,12 @@ define runit::user (
     ensure   => link,
     target   => "/etc/runit/${user}",
     require  => File["/etc/service", "/etc/runit/${user}/run"],
+  }
+  $var = "export SVDIR='${_basedir}/service'"
+  exec { "runit-update-${user}-bash-profile":
+    command => "/bin/echo ${var} >> ~${user}/.bash_profile",
+    user    => $user,
+    group   => $_group,
+    unless  => "/bin/grep -w ${var} ~${user}/.bash_profile",
   }
 }

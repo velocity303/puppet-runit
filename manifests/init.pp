@@ -1,5 +1,6 @@
 class runit (
-  $basedir      = '/home',
+  $basedir      = undef,
+  $home         = '/home',
   $filestore    = 'puppet:///files/runit',
   $package_file = undef,
   $users        = {}
@@ -12,8 +13,14 @@ class runit (
       warn('This module may not work on non-RedHat-based systems')
     }
   }
+  if $basedir == undef {
+    $_basedir = "${home}/${user}"
+  }
+  else {
+    $_basedir = $basedir
+  }
   class { 'runit::install':
-    basedir   => $basedir,
+    basedir   => $_basedir,
     filestore => $filestore,
     workspace => $workspace,
   }
@@ -28,6 +35,10 @@ class runit (
     status     => '/sbin/initctl status runsvdir | grep "/running" 1>/dev/null 2>&1',
     require    => Class['runit::install'],
   }
+  $defaults = {
+    basedir => $_basedir,
+    home    => $home,
+  }
   $config = hiera_hash('runit::users', $users)
-  create_resources('runit::user', $config)
+  create_resources('runit::user', $config, $defaults)
 }
