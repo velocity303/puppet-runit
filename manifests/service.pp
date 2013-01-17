@@ -14,6 +14,7 @@ define runit::service  (
   $home             = '/home',
   $down             = false,
   $command          = 'sleep 60',
+  $timestamp        = true,
 ) {
   if $basedir == undef {
     $_basedir = "${home}/${user}"

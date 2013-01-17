@@ -10,6 +10,9 @@ usually overwritten by another module, but this is useful for simple commands.
 
 * Allow the log directory to set rather than always using ${basedir}/logs.
 
+* Allow timestamps to be turned off in the current log (used for
+stdout/stderr)
+
 0.3.0:
 
 * Make the basedir under which service directories are created configurable -
