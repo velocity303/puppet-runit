@@ -14,14 +14,7 @@ class runit (
       warn('This module may not work on non-RedHat-based systems')
     }
   }
-  if $basedir == undef {
-    $_basedir = "${home}/${user}"
-  }
-  else {
-    $_basedir = $basedir
-  }
   class { 'runit::install':
-    basedir   => $_basedir,
     filestore => $filestore,
     workspace => $workspace,
   }
@@ -37,7 +30,7 @@ class runit (
     require    => Class['runit::install'],
   }
   $defaults = {
-    basedir => $_basedir,
+    basedir => $basedir,
     home    => $home,
   }
   $config = hiera_hash('runit::users', $users)

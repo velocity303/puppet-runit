@@ -34,18 +34,12 @@ define runit::service  (
     $service_logdir = "${logdir}/${service}"
   }
 
-  exec { "${user}-runit-${service}":
-    command => "/bin/mkdir -p ${_basedir}/runit",
-    creates => "${_basedir}/runit",
-    user    => $user,
-    group   => $_group,
-  }
   file { "${_basedir}/runit/${service}":
     ensure  => directory,
     mode    => '0750',
     owner   => $user,
     group   => $_group,
-    require => Exec["${user}-runit-${service}"],
+    require => File["${_basedir}/runit"],
   }
   if $down {
     file { "${_basedir}/runit/${service}/down":
