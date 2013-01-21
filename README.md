@@ -30,7 +30,13 @@ runit::user to configure user services for the kburdis and fbloggs users.
 ### Parameters
 
 *basedir* the base directory under which service directories are created -
-default is '/home' making the service directory '/home/${user}/service'
+default is '${home}/${user}'
+
+*logdir* the directory under which log files are written - default is
+'${basedir}/${logs}'
+
+*home* the base directory under which user home directories are located -
+default is '/home'
 
 *filestore* the filestore where the runit package file is located on the Puppet
 master - default is 'puppet:///files/runit'
@@ -59,10 +65,13 @@ other Puppet modules) can then create services under $HOME/service.
 *title*: The title is the user's username - for example 'kburdis' in the example above.
 
 *basedir* the base directory under which service directories are created -
-default is '/home' making the service directory '/home/${user}/service'
+default is '${home}/${user}'
 
 *group*: The group the runit files under the user's home directory will be
 owned by.  Defaults to the same as the username.
+
+*home* the base directory under which user home directories are located -
+default is '/home'
 
 ## runit::service
 
@@ -93,6 +102,9 @@ and link the service directory under $HOME/service - for example:
 
 *title*: The title is the service name (eg. tomcat in the example above)
 
+*basedir* the base directory under which service directories are created -
+default is '${home}/${user}'
+
 *user*: The user running the service (used for file location and ownership)
 
 *group*: The group of the user running the service (used for file ownership)
@@ -121,6 +133,10 @@ default is '/home' making the service directory '/home/${user}/service'
 
 *down*: True if the service should not be started automatically as soon as the
 service directory is created. Default: false
+
+*command*: The command to run to start the service.  Default is 'sleep 60' as
+the run script is usually overwritten by another module, but this is useful for
+simple commands.
 
 ## User services
 

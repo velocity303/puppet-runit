@@ -1,10 +1,24 @@
 define runit::user (
-  $basedir = '/home',
-  $group   = ''
+  $basedir = $runit::basedir,
+  $logdir  = $runit::logdir,
+  $group   = undef,
+  $home    = $runit::home,
 ) {
-  $user = $title
+  $_user = $title
+  if $basedir == undef {
+    $_basedir = "${home}/${_user}"
+  }
+  else {
+    $_basedir = $basedir
+  }
+  if $logdir == undef {
+    $_logdir = "${basedir}/logs"
+  }
+  else {
+    $_logdir = $logdir
+  }
   if $group == undef {
-    $_group = $user
+    $_group = $_user
   }
   else {
     $_group = $group
@@ -13,64 +27,79 @@ define runit::user (
     owner   => root,
     group   => root,
   }
-  file { "/etc/runit/${user}":
+  file { "/etc/runit/${_user}":
     ensure  => directory,
     mode    => '0755',
   }
-  file { "/etc/runit/${user}/down":
+  file { "/etc/runit/${_user}/down":
     ensure  => absent,
   }
-  file { "/etc/runit/${user}/run":
+  file { "/etc/runit/${_user}/run":
     ensure  => file,
     mode    => '0555',
     content => template('runit/user/run.erb'),
   }
-  file { "/etc/runit/${user}/log":
+  file { "/etc/runit/${_user}/log":
     ensure  => directory,
     mode    => '0755',
-    require => File["/etc/runit/${user}"],
+    require => File["/etc/runit/${_user}"],
   }
-  file { "/etc/runit/${user}/log/down":
+  file { "/etc/runit/${_user}/log/down":
     ensure  => absent,
-    require => File["/etc/runit/${user}/log"],
+    require => File["/etc/runit/${_user}/log"],
   }
-  file { "/etc/runit/${user}/log/run":
+  file { "/etc/runit/${_user}/log/run":
     ensure  => file,
     mode    => '0555',
     content => template('runit/user/log_run.erb'),
     require => File[
-      "/etc/runit/${user}/log",
-      "/etc/runit/${user}/log/down",
-      "${basedir}/${user}/logs/runsvdir"
+      "/etc/runit/${_user}/log",
+      "/etc/runit/${_user}/log/down",
+      "${_logdir}/runsvdir"
     ],
   }
 
-  file { "${basedir}/${user}/service":
+  file { "${_basedir}/service":
     ensure  => directory,
     mode    => '0755',
-    owner   => $user,
+    owner   => $_user,
     group   => $_group,
   }
-  file { "${basedir}/${user}/logs":
+  file { "${_basedir}/runit":
     ensure  => directory,
     mode    => '0755',
-    owner   => $user,
+    owner   => $_user,
     group   => $_group,
   }
-  file { "${basedir}/${user}/logs/runsvdir":
+  if ! defined(File[$logdir]) {
+    file { $_logdir:
+      ensure  => directory,
+      mode    => '0755',
+      owner   => $_user,
+      group   => $_group,
+    }
+  }
+  file { "${_logdir}/runsvdir":
     ensure  => directory,
     mode    => '0755',
-    owner   => $user,
+    owner   => $_user,
     group   => $_group,
-    require => File["${basedir}/${user}/logs"],
+    require => File[$_logdir],
   }
 
-  file { "/etc/service":
+  file { '/etc/service':
     ensure   => directory,
   }
-  file { "/etc/service/${user}":
+  file { "/etc/service/${_user}":
     ensure   => link,
-    target   => "/etc/runit/${user}",
-    require  => File["/etc/service", "/etc/runit/${user}/run"],
+    target   => "/etc/runit/${_user}",
+    require  => File['/etc/service', "/etc/runit/${_user}/run"],
+  }
+  $var = "export SVDIR='${_basedir}/service'"
+  exec { "runit-update-${_user}-bash-profile":
+    command => "/bin/echo ${var} >> ~${_user}/.bash_profile",
+    user    => $_user,
+    group   => $_group,
+    unless  => "/bin/grep -w '${var}' ~${_user}/.bash_profile",
   }
 }
