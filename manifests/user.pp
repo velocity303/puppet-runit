@@ -87,8 +87,10 @@ define runit::user (
     require => File[$_logdir],
   }
 
-  file { '/etc/service':
-    ensure   => directory,
+  if ! defined(File['/etc/service']) {
+    file { '/etc/service':
+      ensure   => directory,
+    }
   }
   file { "/etc/service/${_user}":
     ensure   => link,
