@@ -76,7 +76,7 @@ define runit::service  (
     replace => false,
     require => File["${_basedir}/runit/${service}/log"],
   }
-  file { "${_basedir}/runit/${service}/log/config":
+  file { "${service_logdir}/config":
     ensure  => present,
     mode    => '0440',
     owner   => $user,
