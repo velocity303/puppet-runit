@@ -1,6 +1,6 @@
 class runit (
   $basedir      = undef,
-  $logdie       = undef,
+  $logdir       = undef,
   $home         = '/home',
   $filestore    = 'puppet:///files/runit',
   $package_file = undef,
