@@ -71,14 +71,12 @@ define runit::user (
     owner   => $_user,
     group   => $_group,
   }
-  if ! defined(File[$logdir]) {
     file { $_logdir:
       ensure  => directory,
       mode    => '0755',
       owner   => $_user,
       group   => $_group,
     }
-  }
   file { "${_logdir}/runsvdir":
     ensure  => directory,
     mode    => '0755',
