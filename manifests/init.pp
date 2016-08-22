@@ -2,7 +2,7 @@ class runit (
   $basedir      = undef,
   $logdir       = undef,
   $home         = '/home',
-  $filestore    = 'puppet:///files/runit',
+  $filestore    = 'puppet:///modules/runit',
   $package_file = 'runit-2.1.1-6.el7.centos.x86_64.rpm',
   $users        = {},
   $workspace    = '/root/runit',
