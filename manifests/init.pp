@@ -8,12 +8,12 @@ class runit (
   $workspace    = '/root/runit',
 ) {
   # Only run on RedHat derived systems.
-  case $::osfamily {
-    RedHat: { }
-    default: {
-      warn('This module may not work on non-RedHat-based systems')
-    }
-  }
+  #case $::osfamily {
+  #  RedHat: { }
+  #  default: {
+  #    warn('This module may not work on non-RedHat-based systems')
+  #  }
+  #}
   class { 'runit::install':
     filestore => $filestore,
     workspace => $workspace,
